@@ -70,7 +70,25 @@ class Main(QMainWindow, MainUi):
         self.applyRobertsOperatorsFilter.clicked.connect(self.apply_RobertsOperators_Filter)
         self.revertButton.clicked.connect(self.revert)
         self.revertButton2.clicked.connect(self.revert)
-        
+    
+    def browse_image(self):
+        self.imagePath = None
+        self.imagePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg *.jpeg)')[0]
+        if self.imagePath != None and self.imagePath != '':
+            self.image = self.RGB2GRAY(imagePATH = self.imagePath)
+            self.accomulatedEffects.append(self.image)
+            
+            self.plotOriginalImage()
+            self.showOriginalImage()
+    
+    def saveImage(self):
+        text, okPressed = QInputDialog.getText(self, "Save Image", "<html style='font-size:10pt; color:red;'>Enter Image Name:</html>", QLineEdit.Normal, "")
+        if okPressed:
+            if not os.path.exists('Output'):
+                os.makedirs('Output')
+            if os.path.exists('output/output_image.png'):
+                os.remove('output/output_image.png')
+            cv.imwrite(f'output/{text}.png', np.array(self.outputImage))
     
 
 def main():
