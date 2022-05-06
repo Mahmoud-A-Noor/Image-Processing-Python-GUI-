@@ -90,6 +90,26 @@ class Main(QMainWindow, MainUi):
                 os.remove('output/output_image.png')
             cv.imwrite(f'output/{text}.png', np.array(self.outputImage))
     
+    def revert(self):
+        print(len(self.accomulatedEffects))
+        if len(self.accomulatedEffects) == 1:
+            print("less than 1")
+            self.outputImage = self.accomulatedEffects[-1]
+            self.image = self.outputImage
+            self.plotOutputImage(False)
+            self.showOutputImage()
+            
+        elif len(self.accomulatedEffects) > 1:
+            print("higher than 1")
+            self.accomulatedEffects = self.accomulatedEffects[:-1] 
+            self.outputImage = self.accomulatedEffects[-1]
+            self.image = self.outputImage
+            self.plotOutputImage(False)
+            self.showOutputImage()
+            if len(self.accomulatedEffects) == 1:
+                self.revertButton.setEnabled(False)
+                self.revertButton2.setEnabled(False)
+    
 
 def main():
     app = QApplication(sys.argv)
