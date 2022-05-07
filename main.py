@@ -110,6 +110,33 @@ class Main(QMainWindow, MainUi):
                 self.revertButton.setEnabled(False)
                 self.revertButton2.setEnabled(False)
     
+    def RGB2GRAY(self, image = None,imagePATH = None):
+        if imagePATH != None:
+            image = cv.imread(imagePATH)
+    
+        newImage = []
+        for row in image:
+            tmpRow = []
+            for pixel in row:
+                tmpRow.append(int(sum(pixel)/3))
+            newImage.append(tmpRow)
+        return newImage
+    
+    def getImageMap(self, image):
+        numberList = list(range(0,256))
+        valMap = {}
+        for row in image:
+            for pixel in row:
+                if pixel in valMap.keys():
+                    valMap[pixel] += 1
+                else:
+                    valMap[pixel] = 1
+                    numberList.remove(pixel)
+                    
+        for n in numberList:
+            valMap[n] = 0
+            
+        return valMap
 
 def main():
     app = QApplication(sys.argv)
