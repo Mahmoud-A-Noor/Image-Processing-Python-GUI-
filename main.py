@@ -19,6 +19,12 @@ import cv2 as cv
 from math import pow, log
 
 
+class MplCanvas(FigureCanvasQTAgg):
+    def __init__(self, parent=None, dpi=100):
+        fig = Figure(dpi=dpi)
+        self.axes = fig.add_subplot(111)
+        super(MplCanvas, self).__init__(fig)
+
 MainUi,_ = loadUiType('GUI.ui')
 class Main(QMainWindow, MainUi):
     def __init__(self,parent=None):
@@ -137,6 +143,59 @@ class Main(QMainWindow, MainUi):
             valMap[n] = 0
             
         return valMap
+    
+    def plotOriginalImage(self):
+        valMap = self.getImageMap(self.image)
+        
+        sc = MplCanvas(dpi=100)
+        sc.axes.stem(list(valMap.keys()), list(valMap.values()))
+        sc.axes.set_xlabel('Pixel Value')
+        sc.axes.set_ylabel('Frequency')
+        
+        if self.firstTime:
+            self.layoutVert1 = QVBoxLayout()
+            self.layoutVert1.addWidget(sc)
+            self.groupBox.setLayout(self.layoutVert1)
+            self.firstTime = False
+        else:
+            self.layoutVert1.replaceWidget(self.groupBox.layout().itemAt(0).widget(), sc)
+    
+    def showOriginalImage(self):
+        #self.originalImage.setScaledContents(True)
+        self.original_Image.setPixmap(QPixmap(self.imagePath))
+        
+    def plotOutputImage(self, addOutput = True):
+        if addOutput:
+            self.accomulatedEffects.append(self.outputImage)
+            self.image = self.outputImage
+            if len(self.accomulatedEffects) > 1:
+                self.revertButton.setEnabled(True)
+                self.revertButton2.setEnabled(True)
+        
+        valMap = self.getImageMap(self.outputImage)
+    
+        sc2 = MplCanvas(dpi=100)
+        sc2.axes.stem(list(valMap.keys()), list(valMap.values()))
+        sc2.axes.set_xlabel('Pixel Value')
+        sc2.axes.set_ylabel('Frequency')
+        
+        if self.firstTime2:
+            self.layoutVert2 = QVBoxLayout()
+            self.layoutVert2.addWidget(sc2)
+            self.groupBox_4.setLayout(self.layoutVert2)
+            self.firstTime2 = False
+        else:
+            self.layoutVert2.replaceWidget(self.groupBox_4.layout().itemAt(0).widget(), sc2)
+    
+    def showOutputImage(self):
+        #self.originalImage.setScaledContents(True)
+        if not os.path.exists('temp'):
+            os.makedirs('temp')
+        if os.path.exists('temp/tmp.png'):
+            os.remove('temp/tmp.png')
+            
+        cv.imwrite('temp/tmp.png', np.array(self.outputImage))
+        self.output_Image.setPixmap(QPixmap('temp/tmp.png'))  
 
 def main():
     app = QApplication(sys.argv)
