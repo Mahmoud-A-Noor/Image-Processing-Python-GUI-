@@ -196,6 +196,36 @@ class Main(QMainWindow, MainUi):
             
         cv.imwrite('temp/tmp.png', np.array(self.outputImage))
         self.output_Image.setPixmap(QPixmap('temp/tmp.png'))  
+    
+    def convert2Gray(self):
+        self.outputImage = self.image
+        self.plotOutputImage()
+        self.showOutputImage()
+    
+    def threshold(self):
+        myMap = self.getImageMap(self.image)
+        width, heigth = np.array(self.image).shape
+        pixels = width * heigth
+        comulativeSum = 0
+        threshold = None
+        
+        for i in range(256):
+            if comulativeSum < (pixels/2):
+                comulativeSum += myMap[i]
+            else:
+                threshold = i
+                break
+                
+        newImage = []
+        for row in self.image:
+            tmpRow = []
+            for pixel in row:
+                tmpRow.append(255 if pixel > threshold else 0)
+            newImage.append(tmpRow)
+            
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
 
 def main():
     app = QApplication(sys.argv)
