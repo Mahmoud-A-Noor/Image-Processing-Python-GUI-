@@ -226,6 +226,59 @@ class Main(QMainWindow, MainUi):
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
+    
+    def resample_Up(self):
+        scale, okPressed = QInputDialog.getInt(self, "Resample Up", "<html style='font-size:10pt; color:red;'>Enter Scale Factor :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmp = []
+                for pixel in row:
+                    tmp.append(pixel)
+                    # duplicate column
+                    for _ in range(scale-1):
+                        tmp.append(pixel)
+                        
+                newImage.append(tmp)
+                # duplicate row
+                for _ in range(scale-1):
+                    newImage.append(tmp)
+                    
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
+        
+    def sub_Sample(self):
+        n_subSamples, okPressed = QInputDialog.getInt(self, "subSample", "<html style='font-size:10pt; color:red;'>Enter number of subSampling times :</html>", QLineEdit.Normal)
+        
+        if okPressed:
+            
+            newImage = None
+            self.outputImage = self.image
+            rowCounter = 0
+            columnCounter = 0
+            nIgnoredSamples = 1
+            
+            for _ in range(n_subSamples):
+                newImage = []
+                for row in self.outputImage:
+                    tmp = []
+                    for column in row:
+                        if columnCounter == 0:
+                            columnCounter = nIgnoredSamples
+                            tmp.append(column)
+                        else:
+                            columnCounter -= 1
+                        
+                    if rowCounter == 0:
+                        rowCounter = nIgnoredSamples
+                        newImage.append(tmp)
+                    else:
+                        rowCounter -= 1
+                        
+                self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
 
 def main():
     app = QApplication(sys.argv)
