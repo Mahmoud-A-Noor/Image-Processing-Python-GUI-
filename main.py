@@ -279,6 +279,25 @@ class Main(QMainWindow, MainUi):
                 self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
+            
+    def change_Gray_Level(self):
+        grayLevelBit, okPressed = QInputDialog.getInt(self, "Change Gray Level", "<html style='font-size:10pt; color:red;'>Enter Gray Level to change to :</html>", QLineEdit.Normal)
+    
+        if okPressed:
+            newImage = []
+            TARGETED_GRAY_LEVEL = pow(2, grayLevelBit)
+            TARGET_COMPR_FACTOR = 256/TARGETED_GRAY_LEVEL
+
+
+            for row in self.image:
+                tmpImage = []
+                for pixel in row:
+                    tmpImage.append(np.floor( (pixel/256) * TARGETED_GRAY_LEVEL) * TARGET_COMPR_FACTOR)
+                newImage.append(tmpImage)
+                
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
 
 def main():
     app = QApplication(sys.argv)
