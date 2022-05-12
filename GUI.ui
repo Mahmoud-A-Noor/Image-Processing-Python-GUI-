@@ -536,9 +536,9 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>190</x>
       <y>10</y>
-      <width>861</width>
+      <width>851</width>
       <height>861</height>
      </rect>
     </property>
@@ -569,22 +569,21 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
       <rect>
        <x>0</x>
        <y>440</y>
-       <width>861</width>
+       <width>871</width>
        <height>421</height>
       </rect>
      </property>
      <property name="title">
       <string/>
      </property>
-     <zorder>textEdit</zorder>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>1040</x>
+      <x>1050</x>
       <y>10</y>
-      <width>861</width>
+      <width>851</width>
       <height>861</height>
      </rect>
     </property>
@@ -629,7 +628,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>171</width>
+      <width>181</width>
       <height>871</height>
      </rect>
     </property>
@@ -638,12 +637,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Tab 1</string>
+      <string>Page 1</string>
      </attribute>
      <widget class="QPushButton" name="subtractConstant">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>730</y>
         <width>161</width>
         <height>51</height>
@@ -656,7 +655,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="addConstant">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>670</y>
         <width>161</width>
         <height>51</height>
@@ -669,7 +668,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="Contrast">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>550</y>
         <width>161</width>
         <height>51</height>
@@ -682,7 +681,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="sliceGrayLevel">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>610</y>
         <width>161</width>
         <height>51</height>
@@ -695,7 +694,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="changeGrayLevel">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>310</y>
         <width>161</width>
         <height>51</height>
@@ -708,7 +707,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="powerLaw">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>490</y>
         <width>161</width>
         <height>51</height>
@@ -721,7 +720,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="subtractImage">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>790</y>
         <width>161</width>
         <height>51</height>
@@ -734,7 +733,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="subSample">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>250</y>
         <width>161</width>
         <height>51</height>
@@ -747,7 +746,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="Threshold">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>130</y>
         <width>161</width>
         <height>51</height>
@@ -760,7 +759,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="logTransform">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>430</y>
         <width>161</width>
         <height>51</height>
@@ -773,7 +772,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="toGray">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>70</y>
         <width>161</width>
         <height>51</height>
@@ -786,7 +785,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="negativeTransform">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>370</y>
         <width>161</width>
         <height>51</height>
@@ -799,7 +798,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="resampleUp">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>190</y>
         <width>161</width>
         <height>51</height>
@@ -812,7 +811,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="revertButton">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>50</x>
         <y>10</y>
         <width>71</width>
         <height>51</height>
@@ -835,12 +834,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Tab 2</string>
+      <string>Page 2</string>
      </attribute>
      <widget class="QPushButton" name="subtractImage_2">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>70</y>
         <width>161</width>
         <height>51</height>
@@ -853,7 +852,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="bitPlaneSlice">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>130</y>
         <width>161</width>
         <height>51</height>
@@ -866,7 +865,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="specificBitPlaneSlice">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>190</y>
         <width>161</width>
         <height>51</height>
@@ -879,7 +878,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="equalizeImage">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>250</y>
         <width>161</width>
         <height>51</height>
@@ -892,7 +891,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyAverageFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>310</y>
         <width>161</width>
         <height>51</height>
@@ -905,7 +904,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyMinFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>370</y>
         <width>161</width>
         <height>51</height>
@@ -918,7 +917,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyMaxFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>430</y>
         <width>161</width>
         <height>51</height>
@@ -931,7 +930,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyMedianFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>490</y>
         <width>161</width>
         <height>51</height>
@@ -944,7 +943,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyweightedAverageFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>550</y>
         <width>161</width>
         <height>51</height>
@@ -957,7 +956,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applysharpening1stDerivativeFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>610</y>
         <width>161</width>
         <height>51</height>
@@ -970,7 +969,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applysharpening2ndDerivativeCompositeLaplacianFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>670</y>
         <width>161</width>
         <height>51</height>
@@ -983,7 +982,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applySobelOperatorsFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>730</y>
         <width>161</width>
         <height>51</height>
@@ -996,7 +995,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="applyRobertsOperatorsFilter">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>790</y>
         <width>161</width>
         <height>51</height>
@@ -1009,7 +1008,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <widget class="QPushButton" name="revertButton2">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>50</x>
         <y>10</y>
         <width>71</width>
         <height>51</height>
@@ -1027,6 +1026,112 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
         <width>70</width>
         <height>70</height>
        </size>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Page 3</string>
+     </attribute>
+     <widget class="QPushButton" name="revertButton3">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>10</y>
+        <width>71</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>revertIcon.png</normaloff>revertIcon.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>70</width>
+        <height>70</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyIdealHighPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ideal Highpass Filter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyButterworthLowPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>190</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Butterworth Lowpass Filter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyIdealLowPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ideal Lowpass Filter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyGaussianLowPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>310</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Gaussian Lowpass Filter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyButterworthHighPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>250</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Butterworth Highpass Filter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="applyGaussianHighPassFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>370</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Gaussian Highpass Filter</string>
       </property>
      </widget>
     </widget>
