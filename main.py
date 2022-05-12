@@ -298,6 +298,32 @@ class Main(QMainWindow, MainUi):
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
+            
+    def negative_Transform(self):
+        newImage = []
+        for row in self.image:
+            tmpImage = []
+            for pixel in row:
+                tmpImage.append(255 - pixel)
+            newImage.append(tmpImage)
+            
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
+
+    def log_Transform(self):
+        constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmpImage = []
+                for pixel in row:
+                    tmpImage.append(round(constant * log(1 + pixel)))
+                newImage.append(tmpImage)
+                
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
 
 def main():
     app = QApplication(sys.argv)
