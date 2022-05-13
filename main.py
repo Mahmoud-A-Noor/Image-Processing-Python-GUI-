@@ -97,16 +97,13 @@ class Main(QMainWindow, MainUi):
             cv.imwrite(f'output/{text}.png', np.array(self.outputImage))
     
     def revert(self):
-        print(len(self.accomulatedEffects))
         if len(self.accomulatedEffects) == 1:
-            print("less than 1")
             self.outputImage = self.accomulatedEffects[-1]
             self.image = self.outputImage
             self.plotOutputImage(False)
             self.showOutputImage()
             
         elif len(self.accomulatedEffects) > 1:
-            print("higher than 1")
             self.accomulatedEffects = self.accomulatedEffects[:-1] 
             self.outputImage = self.accomulatedEffects[-1]
             self.image = self.outputImage
@@ -115,6 +112,7 @@ class Main(QMainWindow, MainUi):
             if len(self.accomulatedEffects) == 1:
                 self.revertButton.setEnabled(False)
                 self.revertButton2.setEnabled(False)
+                self.revertButton3.setEnabled(False)
     
     def RGB2GRAY(self, image = None,imagePATH = None):
         if imagePATH != None:
@@ -171,6 +169,7 @@ class Main(QMainWindow, MainUi):
             if len(self.accomulatedEffects) > 1:
                 self.revertButton.setEnabled(True)
                 self.revertButton2.setEnabled(True)
+                self.revertButton3.setEnabled(True)
         
         valMap = self.getImageMap(self.outputImage)
     
