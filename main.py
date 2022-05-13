@@ -324,6 +324,30 @@ class Main(QMainWindow, MainUi):
             self.plotOutputImage()
             self.showOutputImage()
 
+    def power_Law(self):
+            """gamma = 1 ==> no change"""
+            """gamma > 1 ==> brighter"""
+            """gamma < 1 ==> darker"""
+            gamma, okPressed = QInputDialog.getDouble(self, "Adding Gamma", "<html style='font-size:10pt; color:red;'>Enter Gamma :</html>", QLineEdit.Normal)
+            if okPressed:
+                constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
+                if okPressed:
+                    newImage = []
+                    for row in self.image:
+                        tmpImage = []
+                        for pixel in row:
+                            val = pixel ** gamma
+                            val = int(val * constant)
+                            tmpImage.append(val if val < 255 else 255)
+                        newImage.append(tmpImage)
+                    
+                self.outputImage = newImage
+                self.plotOutputImage()
+                self.showOutputImage()
+        
+
+
+
 def main():
     app = QApplication(sys.argv)
     window = Main()
