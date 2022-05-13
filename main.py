@@ -131,6 +131,12 @@ class Main(QMainWindow, MainUi):
         valMap = {}
         for row in image:
             for pixel in row:
+                if pixel < 0 :
+                    pixel = 0
+                elif pixel > 255:
+                    pixel = 255
+                else:
+                    pixel = int(pixel)
                 if pixel in valMap.keys():
                     valMap[pixel] += 1
                 else:
