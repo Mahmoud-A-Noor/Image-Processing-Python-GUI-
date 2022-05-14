@@ -351,6 +351,44 @@ class Main(QMainWindow, MainUi):
                 self.plotOutputImage()
                 self.showOutputImage()
         
+    def contrast(self):
+        newImage = []
+        minValue = np.min(self.image)
+        maxValue = np.max(self.image)
+        for row in self.image:
+            tmpImage = []
+            for pixel in row:
+                result = int( ( (255 - 0) / (maxValue - minValue) ) * (pixel - minValue) + 0 )
+                tmpImage.append(result)
+            newImage.append(tmpImage)
+            
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
+        
+    def slice_Gray_Level(self):
+        approach, okPressed = QInputDialog.getInt(self, "Select Approach", "<html style='font-size:10pt; color:red;'>Enter Approach to use :</html>", QLineEdit.Normal)
+        if okPressed:
+            startRange, okPressed = QInputDialog.getInt(self, "Select Start Range", "<html style='font-size:10pt; color:red;'>Enter Start Range :</html>", QLineEdit.Normal)
+            if okPressed:
+                endRange, okPressed = QInputDialog.getInt(self, "Select End Range", "<html style='font-size:10pt; color:red;'>Enter End Range :</html>", QLineEdit.Normal)
+                if okPressed:
+                    newImage = []
+                    for row in self.image:
+                        tmpImage = []
+                        for pixel in row:
+                            if pixel >= startRange and pixel <= endRange:
+                                tmpImage.append(255)
+                            else:
+                                if approach == 1:
+                                    tmpImage.append(0)
+                                elif approach == 2:
+                                    tmpImage.append(pixel)
+                        newImage.append(tmpImage)
+                    
+                    self.outputImage = newImage
+                    self.plotOutputImage()
+                    self.showOutputImage()
 
 
 
