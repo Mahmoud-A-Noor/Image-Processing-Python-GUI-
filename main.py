@@ -390,6 +390,33 @@ class Main(QMainWindow, MainUi):
                     self.plotOutputImage()
                     self.showOutputImage()
 
+    def add_Constant(self):
+        constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmpRow = []
+                for pixel in row:
+                    tmpRow.append(pixel + constant)
+                newImage.append(tmpRow)
+                
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
+
+    def subtract_Constant(self):
+        constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmpRow = []
+                for pixel in row:
+                    tmpRow.append(pixel - constant)
+                newImage.append(tmpRow)
+                
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
 
 
 def main():
