@@ -431,6 +431,50 @@ class Main(QMainWindow, MainUi):
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
+        
+    def decimalTo_8bit_Binary(self, n):
+        binaryNum =  bin(n).replace("0b", "")
+        for _ in range(len(binaryNum), 8):
+            binaryNum = "0" + binaryNum
+        return binaryNum
+
+    def getPixelValue(self, binaryNum, n_slices):
+        value = 0
+        for i in range(n_slices):
+            if binaryNum[i] == "1":
+                value += 2**int(7-i)
+        return value
+
+    def bit_Plane_Slice(self):
+        n_slices, okPressed = QInputDialog.getInt(self, "number of slices", "<html style='font-size:10pt; color:red;'>Enter Number of slices to extract :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmpImage = []
+                for pixel in row:
+                    tmpImage.append(self.getPixelValue(self.decimalTo_8bit_Binary(pixel), n_slices))
+                newImage.append(tmpImage)
+            
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
+
+    def getSpecificBitPixelValue(self, binaryNum, specificBit):
+        return 2 ** (7 - specificBit) if binaryNum[specificBit] == "1" else 0
+    
+    def specific_Bit_Plane_Slice(self):
+        specificBit, okPressed = QInputDialog.getInt(self, "Select Specific Bit", "<html style='font-size:10pt; color:red;'>Enter Specific Bit to extract :</html>", QLineEdit.Normal)
+        if okPressed:
+            newImage = []
+            for row in self.image:
+                tmpImage = []
+                for pixel in row:
+                    tmpImage.append(self.getSpecificBitPixelValue(self.decimalTo_8bit_Binary(pixel), specificBit))
+                newImage.append(tmpImage)
+            
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
 
 
 def main():
