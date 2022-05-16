@@ -417,6 +417,20 @@ class Main(QMainWindow, MainUi):
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
+    
+    def subtract_Image(self):
+        secondFilePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg)')[0]
+        image2 = self.RGB2GRAY(imagePATH = secondFilePath)
+        newImage = []
+        for row1,row2 in zip(self.image, image2):
+            tmpRow = []
+            for pixel1, pixel2 in zip(row1, row2):
+                tmpRow.append(np.abs(pixel1 - pixel2))
+            newImage.append(tmpRow)
+        
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
 
 
 def main():
