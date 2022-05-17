@@ -475,6 +475,25 @@ class Main(QMainWindow, MainUi):
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
+            
+    def equalize_Image(self):
+        imageMap = self.getImageMap(self.image)
+        comulativeMap = {}
+        comulativeMap[0] = imageMap[0]
+        for i in range(1, 256):
+            comulativeMap[i] = imageMap[i] + comulativeMap[i-1]
+        
+        newImage = []
+        for row in self.image:
+            tmpImage = []
+            for pixel in row:
+                result = round( (255/comulativeMap[255]) * comulativeMap[pixel] )
+                tmpImage.append(result)
+            newImage.append(tmpImage)
+        
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
 
 
 def main():
