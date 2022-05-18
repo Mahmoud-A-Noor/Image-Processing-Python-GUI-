@@ -78,6 +78,13 @@ class Main(QMainWindow, MainUi):
         self.applyRobertsOperatorsFilter.clicked.connect(self.apply_RobertsOperators_Filter)
         self.revertButton.clicked.connect(self.revert)
         self.revertButton2.clicked.connect(self.revert)
+        self.revertButton3.clicked.connect(self.revert)
+        self.applyIdealLowPassFilter.clicked.connect(self.apply_Ideal_LowPass_Filter)
+        self.applyIdealHighPassFilter.clicked.connect(self.apply_Ideal_HighPass_Filter)
+        self.applyButterworthLowPassFilter.clicked.connect(self.apply_Butterworth_LowPass_Filter)
+        self.applyButterworthHighPassFilter.clicked.connect(self.apply_Butterworth_HighPass_Filter)
+        self.applyGaussianLowPassFilter.clicked.connect(self.apply_Gaussian_LowPass_Filter)
+        self.applyGaussianHighPassFilter.clicked.connect(self.apply_Gaussian_HighPass_Filter)
     
     def browse_image(self):
         self.imagePath = None
