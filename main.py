@@ -175,7 +175,7 @@ class Main(QMainWindow, MainUi):
             self.layoutVert1.replaceWidget(self.groupBox.layout().itemAt(0).widget(), sc)
     
     def showOriginalImage(self):
-        self.original_Image.setScaledContents(True)
+        #self.original_Image.setScaledContents(True)
         self.original_Image.setPixmap(QPixmap(self.imagePath))
         
     def plotOutputImage(self, addOutput = True):
@@ -203,7 +203,7 @@ class Main(QMainWindow, MainUi):
             self.layoutVert2.replaceWidget(self.groupBox_4.layout().itemAt(0).widget(), sc2)
     
     def showOutputImage(self):
-        self.output_Image.setScaledContents(True)
+        #self.output_Image.setScaledContents(True)
         if not os.path.exists('temp'):
             os.makedirs('temp')
         if os.path.exists('temp/tmp.png'):
