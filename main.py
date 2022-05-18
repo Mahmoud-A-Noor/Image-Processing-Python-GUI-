@@ -1,4 +1,3 @@
-from asyncio import constants
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -8,7 +7,6 @@ import sys
 import os
 
 import matplotlib
-from matplotlib import image
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -424,17 +422,18 @@ class Main(QMainWindow, MainUi):
     
     def subtract_Image(self):
         secondFilePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg)')[0]
-        image2 = self.RGB2GRAY(imagePATH = secondFilePath)
-        newImage = []
-        for row1,row2 in zip(self.image, image2):
-            tmpRow = []
-            for pixel1, pixel2 in zip(row1, row2):
-                tmpRow.append(np.abs(pixel1 - pixel2))
-            newImage.append(tmpRow)
-        
-        self.outputImage = newImage
-        self.plotOutputImage()
-        self.showOutputImage()
+        if secondFilePath != '':
+            image2 = self.RGB2GRAY(imagePATH = secondFilePath)
+            newImage = []
+            for row1,row2 in zip(self.image, image2):
+                tmpRow = []
+                for pixel1, pixel2 in zip(row1, row2):
+                    tmpRow.append(np.abs(pixel1 - pixel2))
+                newImage.append(tmpRow)
+            
+            self.outputImage = newImage
+            self.plotOutputImage()
+            self.showOutputImage()
         
     def decimalTo_8bit_Binary(self, n):
         binaryNum =  bin(n).replace("0b", "")
@@ -498,6 +497,8 @@ class Main(QMainWindow, MainUi):
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
+        
+    
 
 
 def main():
