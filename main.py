@@ -91,6 +91,7 @@ class Main(QMainWindow, MainUi):
         self.imagePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg *.jpeg)')[0]
         if self.imagePath != None and self.imagePath != '':
             self.image = self.RGB2GRAY(imagePATH = self.imagePath)
+            self.accomulatedEffects = []
             self.accomulatedEffects.append(self.image)
             
             self.plotOriginalImage()
