@@ -514,7 +514,123 @@ class Main(QMainWindow, MainUi):
         self.plotOutputImage()
         self.showOutputImage()
         
+    def getPixelMask(self, image, index, index2, filterSize):
+        maskStartUpRange = index - int(filterSize/2)
+        maskEndBottomRange = index + int(filterSize/2)
+        maskStartLeftRange = index2 - int(filterSize/2)
+        maskEndRightRange = index2 + int(filterSize/2)
+        numberOfRows = len(image)
+        numberOfColumns = len(image[0])
+        mask = []
+        
+        if filterSize == 2:
+            pixel1 = image[index][index2]
+            pixel2 = image[index][index2+1] if index2+1 < numberOfColumns else 0
+            pixel3 = image[index+1][index2] if index+1 < numberOfRows else 0
+            pixel4 = image[index+1][index2+1] if index2+1 < numberOfColumns and index+1 < numberOfRows else 0
+            
+            mask.append([[pixel1, pixel2],[pixel3, pixel4]])
+        else:
+            for i in  range(maskStartUpRange, maskEndBottomRange + 1):
+                tmpRow = []
+                for j in range(maskStartLeftRange, maskEndRightRange + 1):
+                    if i < 0 or j < 0 or i >= numberOfRows or j >= numberOfColumns:
+                        tmpRow.append(0)
+                    else:
+                        tmpRow.append(image[i][j])
+                mask.append(tmpRow)
+        
+        mask = np.array(mask).reshape(filterSize, filterSize)
+        return mask
+
+    def getMasks(self, filterSize=3):
+        masks = []
+        for index in range(len(self.image)):
+            for index2 in range(len(self.image[0])):
+                masks.append(self.getPixelMask(self.image, index, index2, filterSize))
+        return masks
     
+    def applySpecificFilter(self, masks, filterType, shape):
+        newImage = []
+        if filterType == "average":
+            for i in masks:
+                newImage.append(round(np.average(i)))
+                
+        elif filterType == "weightedAverage":
+            for i in masks:
+                weightedFilter = np.array([[1,2,1],[2,4,2],[1,2,1]])
+                value = np.sum(np.multiply(i, weightedFilter))/16
+                newImage.append(round(value))
+                
+        elif filterType == "median":
+            for i in masks:
+                newImage.append(np.median(i))
+                
+        elif filterType == "max":
+            for i in masks:
+                newImage.append(np.max(i))
+                
+        elif filterType == "min":
+            for i in masks:
+                newImage.append(np.min(i))
+                
+        elif filterType == "sharpening1stDerivative":
+            for i in range(len(self.image)):
+                for j in range(len(self.image[0])):
+                    currentPixel = self.image[i][j]
+                    nextPixel = self.image[i][j+1] if j+1 < len(self.image[0]) else 0
+                    
+                    value = currentPixel + (nextPixel - currentPixel)
+                    newImage.append(value)
+                    
+        elif filterType == "sharpening2ndDerivativeCompositeLaplacian":
+            for i in masks:
+                compositeFilter = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
+                
+                value = np.sum(np.multiply(i, compositeFilter))
+                if value < 0:
+                    value = 0
+                elif value > 255:
+                    value = 255
+                newImage.append(value)
+        
+        elif filterType == "SobelOperators":
+            for i in masks:
+                filter1 = np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
+                filter2 = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
+                
+                value = np.sum(np.multiply(i, filter1)) + np.sum(np.multiply(i, filter2))
+                if value < 0:
+                    value = 0
+                elif value > 255:
+                    value = 255
+                newImage.append(value if value <= 255 else 0)
+        
+        elif filterType == "RobertsOperators":
+            for i in masks:
+                filter1 = np.array([[-1,0],[0,1]])
+                filter2 = np.array([[0,-1],[1,0]])
+                
+                value = np.sum(np.multiply(i, filter1)) + np.sum(np.multiply(i, filter2))
+                if value < 0:
+                    value = 0
+                elif value > 255:
+                    value = 255
+                newImage.append(value if value <= 255 else 0)
+        
+        newImage = np.array(newImage).reshape(shape)
+        return newImage              
+
+    def applyFilter(self, filterSize = None, filterType = None):
+        """filterType: average, median, max, min, weightedAverage, sharpening1stDerivative, sharpening2ndDerivativeCompositeLaplacian, SobelOperator, RobertsOperator"""
+        """filterSize: odd number only (3, 5, 7, 9, 11, 13, 15, ...) Except for RobertsOperator filterSize = 2 and for Robert and weigtedAverage filterSize = 3"""
+        
+        masks = self.getMasks(filterSize)
+        newImage = self.applySpecificFilter(masks, filterType, (len(self.image), len(self.image[0])))
+        
+        self.outputImage = newImage
+        self.plotOutputImage()
+        self.showOutputImage()
 
 
 def main():
