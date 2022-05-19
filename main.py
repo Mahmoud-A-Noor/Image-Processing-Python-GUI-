@@ -94,6 +94,12 @@ class Main(QMainWindow, MainUi):
             self.accomulatedEffects = []
             self.accomulatedEffects.append(self.image)
             
+            ##### reset output image #####
+            self.output_Image.setVisible(False)
+            if not self.firstTime :
+                self.groupBox_4.layout().itemAt(0).widget().setVisible(False)
+            #####
+            
             self.plotOriginalImage()
             self.showOriginalImage()
     
@@ -201,6 +207,7 @@ class Main(QMainWindow, MainUi):
             self.firstTime2 = False
         else:
             self.layoutVert2.replaceWidget(self.groupBox_4.layout().itemAt(0).widget(), sc2)
+            self.groupBox_4.layout().itemAt(0).widget().setVisible(True)
     
     def showOutputImage(self):
         #self.output_Image.setScaledContents(True)
@@ -211,6 +218,7 @@ class Main(QMainWindow, MainUi):
             
         cv.imwrite('temp/tmp.png', np.array(self.outputImage))
         self.output_Image.setPixmap(QPixmap('temp/tmp.png'))  
+        self.output_Image.setVisible(True)
     
     def convert2Gray(self):
         self.outputImage = self.image
