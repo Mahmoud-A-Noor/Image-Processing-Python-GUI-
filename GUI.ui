@@ -320,7 +320,7 @@
      <attribute name="title">
       <string>Page 2</string>
      </attribute>
-     <widget class="QPushButton" name="subtractImage_2">
+     <widget class="QPushButton" name="logicalOperation">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -330,7 +330,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Subtract Image</string>
+       <string>Logical Operation</string>
       </property>
      </widget>
      <widget class="QPushButton" name="bitPlaneSlice">
