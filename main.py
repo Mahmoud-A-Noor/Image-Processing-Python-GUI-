@@ -64,6 +64,7 @@ class Main(QMainWindow, MainUi):
         self.addConstant.clicked.connect(self.add_Constant)
         self.subtractConstant.clicked.connect(self.subtract_Constant)
         self.subtractImage.clicked.connect(self.subtract_Image)
+        self.logicalOperation.clicked.connect(self.logical_Operation)
         self.bitPlaneSlice.clicked.connect(self.bit_Plane_Slice)
         self.specificBitPlaneSlice.clicked.connect(self.specific_Bit_Plane_Slice)
         self.equalizeImage.clicked.connect(self.equalize_Image)
@@ -450,6 +451,27 @@ class Main(QMainWindow, MainUi):
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
+    
+    def logical_Operation(self):
+        secondFilePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg *.jpeg)')[0]
+        if secondFilePath != '':
+            operator, okPressed = QInputDialog.getText(self, "Choosing Operator", "<html style='font-size:10pt; color:red;'>Enter Operator (and, or, xor) :</html>", QLineEdit.Normal)
+            if okPressed :
+                image2 = self.RGB2GRAY(imagePATH = secondFilePath)
+                newImage = []
+                
+                image1 = np.array(self.image)
+                image2 = np.array(image2)
+                if operator == "and":
+                    newImage = cv.bitwise_and(image1, image2)
+                elif operator == "or":
+                    newImage = cv.bitwise_or(image1, image2)
+                elif operator == "xor":
+                    newImage = cv.bitwise_xor(image1, image2)
+                    
+                self.outputImage = newImage
+                self.plotOutputImage()
+                self.showOutputImage()    
         
     def decimalTo_8bit_Binary(self, n):
         binaryNum =  bin(n).replace("0b", "")
