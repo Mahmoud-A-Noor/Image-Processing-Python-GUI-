@@ -682,7 +682,166 @@ class Main(QMainWindow, MainUi):
         self.applyFilter(2, "RobertsOperators")
         
     
-    
+    def apply_Ideal_LowPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            M = len(self.image)
+            N = len(self.image[0])
+
+            FT_img = np.fft.fft2(self.image)
+
+            u = np.arange(0, M)
+            idx = np.argwhere(u>M/2)
+            u[idx] = u[idx]-M
+
+            v = np.arange(0, N)
+            idy = np.argwhere(v>N/2)
+            v[idy] = v[idy]-N
+
+            V, U = np.meshgrid(v, u)
+
+            D = np.sqrt(U**2 + V**2)
+
+            H = (D <= D0)
+
+            self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+            self.plotOutputImage()
+            self.showOutputImage()
+    def apply_Ideal_HighPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            M = len(self.image)
+            N = len(self.image[0])
+
+            FT_img = np.fft.fft2(self.image)
+
+            u = np.arange(0, M)
+            idx = np.argwhere(u>M/2)
+            u[idx] = u[idx]-M
+
+            v = np.arange(0, N)
+            idy = np.argwhere(v>N/2)
+            v[idy] = v[idy]-N
+
+            V, U = np.meshgrid(v, u)
+
+            D = np.sqrt(U**2 + V**2)
+
+            H = (D > D0)
+
+            self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+            self.plotOutputImage()
+            self.showOutputImage()
+    def apply_Butterworth_LowPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            n, okPressed = QInputDialog.getInt(self, "Choosing n", "<html style='font-size:10pt; color:red;'>Enter Value of n :</html>", QLineEdit.Normal)
+            if okPressed:
+                M = len(self.image)
+                N = len(self.image[0])
+
+                FT_img = np.fft.fft2(self.image)
+
+                u = np.arange(0, M)
+                idx = np.argwhere(u>M/2)
+                u[idx] = u[idx]-M
+
+                v = np.arange(0, N)
+                idy = np.argwhere(v>N/2)
+                v[idy] = v[idy]-N
+
+                V, U = np.meshgrid(v, u)
+
+                D = np.sqrt(U**2 + V**2)
+
+                H = 1/(1+(D/D0)**n)
+                
+                self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+                self.plotOutputImage()
+                self.showOutputImage()   
+    def apply_Butterworth_HighPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            n, okPressed = QInputDialog.getInt(self, "Choosing n", "<html style='font-size:10pt; color:red;'>Enter Value of n :</html>", QLineEdit.Normal)
+            if okPressed:
+                M = len(self.image)
+                N = len(self.image[0])
+
+                FT_img = np.fft.fft2(self.image)
+                
+                u = np.arange(0, M)
+                idx = np.argwhere(u>M/2)
+                u[idx] = u[idx]-M
+
+                v = np.arange(0, N)
+                idy = np.argwhere(v>N/2)
+                v[idy] = v[idy]-N
+
+                V, U = np.meshgrid(v, u)
+
+                D = np.sqrt(U**2 + V**2)
+
+                H = 1/(1+(D0/D)**n)
+                
+                self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+                self.plotOutputImage()
+                self.showOutputImage()  
+    def apply_Gaussian_LowPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            M = len(self.image)
+            N = len(self.image[0])
+
+            FT_img = np.fft.fft2(self.image)
+            
+            D0 = (D0**2)*2
+            u = np.arange(0, M)
+            idx = np.argwhere(u>M/2)
+            u[idx] = u[idx]-M
+
+            v = np.arange(0, N)
+            idy = np.argwhere(v>N/2)
+            v[idy] = v[idy]-N
+
+            V, U = np.meshgrid(v, u)
+
+            D = np.sqrt(U**2 + V**2)
+            D = -D**2
+
+            H = np.exp(D/D0)
+            
+            self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+            self.plotOutputImage()
+            self.showOutputImage()
+    def apply_Gaussian_HighPass_Filter(self):
+        D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
+        if okPressed:
+            n, okPressed = QInputDialog.getInt(self, "Choosing n", "<html style='font-size:10pt; color:red;'>Enter Value of n :</html>", QLineEdit.Normal)
+            if okPressed:
+                M = len(self.image)
+                N = len(self.image[0])
+
+                FT_img = np.fft.fft2(self.image)
+                
+                D0 = (D0**2)*2
+                u = np.arange(0, M)
+                idx = np.argwhere(u>M/2)
+                u[idx] = u[idx]-M
+
+                v = np.arange(0, N)
+                idy = np.argwhere(v>N/2)
+                v[idy] = v[idy]-N
+
+                V, U = np.meshgrid(v, u)
+
+                D = np.sqrt(U**2 + V**2)
+                D = -D**2
+
+                H = 1-np.exp(D/D0)
+                
+                self.outputImage = np.real(np.fft.ifft2(FT_img * H))
+                self.plotOutputImage()
+                self.showOutputImage()
 
 
 def main():
