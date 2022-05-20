@@ -653,6 +653,36 @@ class Main(QMainWindow, MainUi):
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
+        
+    def apply_Average_Filter(self):
+        filterSize, okPressed = QInputDialog.getInt(self, "Filter Size", "<html style='font-size:10pt; color:red;'>Enter Filter Size (3, 5, 7, ...) :</html>", QLineEdit.Normal)
+        if okPressed:
+            self.applyFilter(filterSize, "average")
+    def apply_Min_Filter(self):
+        filterSize, okPressed = QInputDialog.getInt(self, "Filter Size", "<html style='font-size:10pt; color:red;'>Enter Filter Size (3, 5, 7, ...) :</html>", QLineEdit.Normal)
+        if okPressed:
+            self.applyFilter(filterSize, "min")
+    def apply_Max_Filter(self):
+        filterSize, okPressed = QInputDialog.getInt(self, "Filter Size", "<html style='font-size:10pt; color:red;'>Enter Filter Size (3, 5, 7, ...) :</html>", QLineEdit.Normal)
+        if okPressed:
+            self.applyFilter(filterSize, "max")
+    def apply_Median_Filter(self):
+        filterSize, okPressed = QInputDialog.getInt(self, "Filter Size", "<html style='font-size:10pt; color:red;'>Enter Filter Size (3, 5, 7, ...) :</html>", QLineEdit.Normal)
+        if okPressed:
+            self.applyFilter(filterSize, "median")
+    def apply_weightedAverage_Filter(self):
+        self.applyFilter(3, "weightedAverage")
+    def apply_sharpening1stDerivative_Filter(self):
+        self.applyFilter(3, "sharpening1stDerivative")
+    def apply_sharpening2ndDerivativeCompositeLaplacian_Filter(self):
+        self.applyFilter(3, "sharpening2ndDerivativeCompositeLaplacian")
+    def apply_SobelOperators_Filter(self):
+        self.applyFilter(3, "SobelOperators")
+    def apply_RobertsOperators_Filter(self):
+        self.applyFilter(2, "RobertsOperators")
+        
+    
+    
 
 
 def main():
