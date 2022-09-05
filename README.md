@@ -1,6 +1,6 @@
 # Image-Processing-Python-GUI-
 
 requirements:
-  pyqt5
-  numpy
-  opencv
+  pyqt5<br>
+  numpy<br>
+  opencv<br>
