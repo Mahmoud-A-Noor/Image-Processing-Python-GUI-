@@ -19,7 +19,7 @@ Note ⇒ you can change the theme from theme menu (+12 theme are provided)
 
 ## Techniques
 
-![median filter.png](Image%20Processing%20Using%20Python%203758a609382846b4b9da04b9d72a10fc/median_filter.png)
+![Simple Project Overview](https://user-images.githubusercontent.com/59361888/210313373-861c87db-2716-4bdb-82b8-33c9df21a00a.png)
 
 - To Gray
 - Threshold
