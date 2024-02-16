@@ -91,7 +91,7 @@ class Main(QMainWindow, MainUi):
         self.imagePath = None
         self.imagePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg *.jpeg)')[0]
         if self.imagePath != None and self.imagePath != '':
-            self.image = self.RGB2GRAY(imagePATH = self.imagePath)
+            self.image = cv.imread(self.imagePath)
             self.accomulatedEffects = []
             self.accomulatedEffects.append(self.image)
             
@@ -144,34 +144,56 @@ class Main(QMainWindow, MainUi):
         return newImage
     
     def getImageMap(self, image):
-        numberList = list(range(0,256))
-        valMap = {}
-        for row in image:
-            for pixel in row:
-                if pixel < 0 :
-                    pixel = 0
-                elif pixel > 255:
-                    pixel = 255
-                else:
-                    pixel = int(pixel)
-                if pixel in valMap.keys():
-                    valMap[pixel] += 1
-                else:
-                    valMap[pixel] = 1
-                    numberList.remove(pixel)
-                    
-        for n in numberList:
-            valMap[n] = 0
-            
+        image = np.array(image)
+        if len(image.shape) == 2:  # Grayscale image
+            valMap = {}
+            for row in image:
+                for pixel in row:
+                    pixel = max(0, min(255, int(pixel)))  # Ensure pixel value is within 0-255 range
+                    if pixel in valMap:
+                        valMap[pixel] += 1
+                    else:
+                        valMap[pixel] = 1
+            for n in range(256):
+                if n not in valMap:
+                    valMap[n] = 0
+        elif len(image.shape) == 3 and image.shape[2] == 3:  # RGB image
+            valMaps = [{}, {}, {}]  # Separate maps for each channel
+            for row in image:
+                for pixel in row:
+                    for i in range(3):  # Iterate over RGB channels
+                        channel_pixel = max(0, min(255, int(pixel[i])))  # Ensure pixel value is within 0-255 range
+                        if channel_pixel in valMaps[i]:
+                            valMaps[i][channel_pixel] += 1
+                        else:
+                            valMaps[i][channel_pixel] = 1
+            valMap = {"Red": valMaps[0], "Green": valMaps[1], "Blue": valMaps[2]}
+            for i in range(3):
+                for n in range(256):
+                    if n not in valMap["Red"]:
+                        valMap["Red"][n] = 0
+                    if n not in valMap["Green"]:
+                        valMap["Green"][n] = 0
+                    if n not in valMap["Blue"]:
+                        valMap["Blue"][n] = 0
+        else:
+            raise ValueError("Unsupported image format")
         return valMap
-    
+
     def plotOriginalImage(self):
         valMap = self.getImageMap(self.image)
         
         sc = MplCanvas(dpi=100)
-        sc.axes.stem(list(valMap.keys()), list(valMap.values()))
+        
+        if isinstance(valMap, dict):  # RGB image
+            for color, color_map in valMap.items():
+                sc.axes.stem(list(color_map.keys()), list(color_map.values()), label=color)
+        else:  # Grayscale image
+            sc.axes.stem(list(valMap.keys()), list(valMap.values()))
+        
         sc.axes.set_xlabel('Pixel Value')
         sc.axes.set_ylabel('Frequency')
+        sc.axes.legend()
         
         if self.firstTime:
             self.layoutVert1 = QVBoxLayout()
@@ -185,7 +207,7 @@ class Main(QMainWindow, MainUi):
         #self.original_Image.setScaledContents(True)
         self.original_Image.setPixmap(QPixmap(self.imagePath))
         
-    def plotOutputImage(self, addOutput = True):
+    def plotOutputImage(self, addOutput=True):
         if addOutput:
             self.accomulatedEffects.append(self.outputImage)
             self.image = self.outputImage
@@ -195,11 +217,17 @@ class Main(QMainWindow, MainUi):
                 self.revertButton3.setEnabled(True)
         
         valMap = self.getImageMap(self.outputImage)
-    
+        
         sc2 = MplCanvas(dpi=100)
-        sc2.axes.stem(list(valMap.keys()), list(valMap.values()))
+        if isinstance(valMap, dict):  # RGB image
+            for color, color_map in valMap.items():
+                sc2.axes.stem(list(color_map.keys()), list(color_map.values()), label=color)
+        else:  # Grayscale image
+            sc2.axes.stem(list(valMap.keys()), list(valMap.values()))
+        
         sc2.axes.set_xlabel('Pixel Value')
         sc2.axes.set_ylabel('Frequency')
+        sc2.axes.legend()
         
         if self.firstTime2:
             self.layoutVert2 = QVBoxLayout()
@@ -228,29 +256,40 @@ class Main(QMainWindow, MainUi):
     
     def threshold(self):
         myMap = self.getImageMap(self.image)
-        width, heigth = np.array(self.image).shape
-        pixels = width * heigth
+        width, height = np.array(self.image).shape[:2]  # Get the width and height of the image
+        pixels = width * height
         comulativeSum = 0
-        threshold = None
+        
+        threshold, okPressed = QInputDialog.getInt(self, "Threshold", "<html style='font-size:10pt; color:red;'>Enter Threshold :</html>", QLineEdit.Normal)
+        
+        # Calculate threshold for grayscale image
+        if isinstance(myMap, dict):  
+            grayscale_map = {}
+            for color_map in myMap.values():
+                for key, value in color_map.items():
+                    grayscale_map[key] = grayscale_map.get(key, 0) + value
+            myMap = grayscale_map
         
         for i in range(256):
-            if comulativeSum < (pixels/2):
-                comulativeSum += myMap[i]
-            else:
+            comulativeSum += myMap.get(i, 0)
+            if comulativeSum >= (pixels / 2):
                 threshold = i
                 break
-                
+        
         newImage = []
-        for row in self.image:
-            tmpRow = []
-            for pixel in row:
-                tmpRow.append(255 if pixel > threshold else 0)
-            newImage.append(tmpRow)
-            
+        if isinstance(self.image[0][0], int):  # Grayscale image
+            for row in self.image:
+                tmpRow = [255 if pixel > threshold else 0 for pixel in row]
+                newImage.append(tmpRow)
+        else:  # RGB image
+            for row in self.image:
+                tmpRow = [[255 if channel_pixel > threshold else 0 for channel_pixel in pixel] for pixel in row]
+                newImage.append(tmpRow)
+                
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
-    
+        
     def resample_Up(self):
         scale, okPressed = QInputDialog.getInt(self, "Resample Up", "<html style='font-size:10pt; color:red;'>Enter Scale Factor :</html>", QLineEdit.Normal)
         if okPressed:
@@ -303,34 +342,39 @@ class Main(QMainWindow, MainUi):
                 self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
-            
+                  
     def change_Gray_Level(self):
         grayLevelBit, okPressed = QInputDialog.getInt(self, "Change Gray Level", "<html style='font-size:10pt; color:red;'>Enter Gray Level to change to :</html>", QLineEdit.Normal)
-    
+        
         if okPressed:
             newImage = []
             TARGETED_GRAY_LEVEL = pow(2, grayLevelBit)
-            TARGET_COMPR_FACTOR = 256/TARGETED_GRAY_LEVEL
-
-
-            for row in self.image:
-                tmpImage = []
-                for pixel in row:
-                    tmpImage.append(np.floor( (pixel/256) * TARGETED_GRAY_LEVEL) * TARGET_COMPR_FACTOR)
-                newImage.append(tmpImage)
-                
+            TARGET_COMPR_FACTOR = 256 / TARGETED_GRAY_LEVEL
+            
+            if isinstance(self.image[0][0], int):  # Grayscale image
+                for row in self.image:
+                    tmpImage = [int(np.floor((pixel / 256) * TARGETED_GRAY_LEVEL) * TARGET_COMPR_FACTOR) for pixel in row]
+                    newImage.append(tmpImage)
+            else:  # RGB image
+                for row in self.image:
+                    tmpImage = [[int(np.floor((channel_pixel / 256) * TARGETED_GRAY_LEVEL) * TARGET_COMPR_FACTOR) for channel_pixel in pixel] for pixel in row]
+                    newImage.append(tmpImage)
+                    
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
             
     def negative_Transform(self):
         newImage = []
-        for row in self.image:
-            tmpImage = []
-            for pixel in row:
-                tmpImage.append(255 - pixel)
-            newImage.append(tmpImage)
-            
+        if isinstance(self.image[0][0], int):  # Grayscale image
+            for row in self.image:
+                tmpImage = [255 - pixel for pixel in row]
+                newImage.append(tmpImage)
+        else:  # RGB image
+            for row in self.image:
+                tmpImage = [[255 - channel_pixel for channel_pixel in pixel] for pixel in row]
+                newImage.append(tmpImage)
+                
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
@@ -339,48 +383,51 @@ class Main(QMainWindow, MainUi):
         constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
         if okPressed:
             newImage = []
-            for row in self.image:
-                tmpImage = []
-                for pixel in row:
-                    tmpImage.append(round(constant * log(1 + pixel)))
-                newImage.append(tmpImage)
-                
+            if isinstance(self.image[0][0], int):  # Grayscale image
+                for row in self.image:
+                    tmpImage = [round(constant * log(1 + pixel)) for pixel in row]
+                    newImage.append(tmpImage)
+            else:  # RGB image
+                for row in self.image:
+                    tmpImage = [[round(constant * log(1 + channel_pixel)) for channel_pixel in pixel] for pixel in row]
+                    newImage.append(tmpImage)
+                    
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
 
     def power_Law(self):
-            """gamma = 1 ==> no change"""
-            """gamma > 1 ==> brighter"""
-            """gamma < 1 ==> darker"""
-            gamma, okPressed = QInputDialog.getDouble(self, "Adding Gamma", "<html style='font-size:10pt; color:red;'>Enter Gamma :</html>", QLineEdit.Normal)
+        gamma, okPressed = QInputDialog.getDouble(self, "Adding Gamma", "<html style='font-size:10pt; color:red;'>Enter Gamma :</html>", QLineEdit.Normal)
+        if okPressed:
+            constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
             if okPressed:
-                constant, okPressed = QInputDialog.getInt(self, "Adding Constant", "<html style='font-size:10pt; color:red;'>Enter Constant integer :</html>", QLineEdit.Normal)
-                if okPressed:
-                    newImage = []
+                newImage = []
+                if isinstance(self.image[0][0], int):  # Grayscale image
                     for row in self.image:
-                        tmpImage = []
-                        for pixel in row:
-                            val = pixel ** gamma
-                            val = int(val * constant)
-                            tmpImage.append(val if val < 255 else 255)
+                        tmpImage = [min(int(pixel ** gamma * constant), 255) for pixel in row]
+                        newImage.append(tmpImage)
+                else:  # RGB image
+                    for row in self.image:
+                        tmpImage = [[min(int(channel_pixel ** gamma * constant), 255) for channel_pixel in pixel] for pixel in row]
                         newImage.append(tmpImage)
                     
                 self.outputImage = newImage
                 self.plotOutputImage()
                 self.showOutputImage()
-        
+
     def contrast(self):
         newImage = []
         minValue = np.min(self.image)
         maxValue = np.max(self.image)
-        for row in self.image:
-            tmpImage = []
-            for pixel in row:
-                result = int( ( (255 - 0) / (maxValue - minValue) ) * (pixel - minValue) + 0 )
-                tmpImage.append(result)
-            newImage.append(tmpImage)
-            
+        if isinstance(self.image[0][0], int):  # Grayscale image
+            for row in self.image:
+                tmpImage = [int(((255 - 0) / (maxValue - minValue)) * (pixel - minValue) + 0) for pixel in row]
+                newImage.append(tmpImage)
+        else:  # RGB image
+            for row in self.image:
+                tmpImage = [[int(((255 - 0) / (maxValue - minValue)) * (channel_pixel - minValue) + 0) for channel_pixel in pixel] for pixel in row]
+                newImage.append(tmpImage)
+                
         self.outputImage = newImage
         self.plotOutputImage()
         self.showOutputImage()
@@ -414,9 +461,7 @@ class Main(QMainWindow, MainUi):
         if okPressed:
             newImage = []
             for row in self.image:
-                tmpRow = []
-                for pixel in row:
-                    tmpRow.append(pixel + constant)
+                tmpRow = [pixel + constant for pixel in row]
                 newImage.append(tmpRow)
                 
             self.outputImage = newImage
@@ -428,30 +473,26 @@ class Main(QMainWindow, MainUi):
         if okPressed:
             newImage = []
             for row in self.image:
-                tmpRow = []
-                for pixel in row:
-                    tmpRow.append(pixel - constant)
+                tmpRow = [pixel - constant for pixel in row]
                 newImage.append(tmpRow)
                 
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
-    
+
     def subtract_Image(self):
         secondFilePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg)')[0]
         if secondFilePath != '':
-            image2 = self.RGB2GRAY(imagePATH = secondFilePath)
+            image2 = cv.imread(secondFilePath)
             newImage = []
-            for row1,row2 in zip(self.image, image2):
-                tmpRow = []
-                for pixel1, pixel2 in zip(row1, row2):
-                    tmpRow.append(np.abs(pixel1 - pixel2))
+            for row1, row2 in zip(self.image, image2):
+                tmpRow = [np.abs(pixel1 - pixel2) for pixel1, pixel2 in zip(row1, row2)]
                 newImage.append(tmpRow)
             
             self.outputImage = newImage
             self.plotOutputImage()
             self.showOutputImage()
-    
+
     def logical_Operation(self):
         secondFilePath = QFileDialog.getOpenFileName(self, 'Open Image', './', 'Image Files (*.png *.jpg *.jpeg)')[0]
         if secondFilePath != '':
@@ -471,7 +512,7 @@ class Main(QMainWindow, MainUi):
                     
                 self.outputImage = newImage
                 self.plotOutputImage()
-                self.showOutputImage()    
+                self.showOutputImage()
         
     def decimalTo_8bit_Binary(self, n):
         binaryNum =  bin(n).replace("0b", "")
@@ -493,7 +534,13 @@ class Main(QMainWindow, MainUi):
             for row in self.image:
                 tmpImage = []
                 for pixel in row:
-                    tmpImage.append(self.getPixelValue(self.decimalTo_8bit_Binary(pixel), n_slices))
+                    if isinstance(pixel, int):  # Grayscale image
+                        tmpImage.append(self.getPixelValue(self.decimalTo_8bit_Binary(pixel), n_slices))
+                    else:  # RGB image
+                        tmpPixel = []
+                        for channel in pixel:
+                            tmpPixel.append(self.getPixelValue(self.decimalTo_8bit_Binary(channel), n_slices))
+                        tmpImage.append(tmpPixel)
                 newImage.append(tmpImage)
             
             self.outputImage = newImage
@@ -502,7 +549,7 @@ class Main(QMainWindow, MainUi):
 
     def getSpecificBitPixelValue(self, binaryNum, specificBit):
         return 2 ** (7 - specificBit) if binaryNum[specificBit] == "1" else 0
-    
+
     def specific_Bit_Plane_Slice(self):
         specificBit, okPressed = QInputDialog.getInt(self, "Select Specific Bit", "<html style='font-size:10pt; color:red;'>Enter Specific Bit to extract :</html>", QLineEdit.Normal)
         if okPressed:
@@ -510,7 +557,13 @@ class Main(QMainWindow, MainUi):
             for row in self.image:
                 tmpImage = []
                 for pixel in row:
-                    tmpImage.append(self.getSpecificBitPixelValue(self.decimalTo_8bit_Binary(pixel), specificBit))
+                    if isinstance(pixel, int):  # Grayscale image
+                        tmpImage.append(self.getSpecificBitPixelValue(self.decimalTo_8bit_Binary(pixel), specificBit))
+                    else:  # RGB image
+                        tmpPixel = []
+                        for channel in pixel:
+                            tmpPixel.append(self.getSpecificBitPixelValue(self.decimalTo_8bit_Binary(channel), specificBit))
+                        tmpImage.append(tmpPixel)
                 newImage.append(tmpImage)
             
             self.outputImage = newImage
@@ -519,17 +572,21 @@ class Main(QMainWindow, MainUi):
             
     def equalize_Image(self):
         imageMap = self.getImageMap(self.image)
-        comulativeMap = {}
-        comulativeMap[0] = imageMap[0]
-        for i in range(1, 256):
-            comulativeMap[i] = imageMap[i] + comulativeMap[i-1]
+        
+        cumulativeMaps = [{}, {}, {}]
+        for i in range(3):
+            cumulativeMaps[i][0] = imageMap[list(imageMap.keys())[0]][0]  # Initialize cumulative map with the first channel
+            for j in range(1, 256):
+                cumulativeMaps[i][j] = imageMap[list(imageMap.keys())[i]][j] + cumulativeMaps[i][j - 1]
         
         newImage = []
         for row in self.image:
             tmpImage = []
             for pixel in row:
-                result = round( (255/comulativeMap[255]) * comulativeMap[pixel] )
-                tmpImage.append(result)
+                newPixel = [0, 0, 0]
+                for i in range(3):  # Iterate over RGB channels
+                    newPixel[i] = round((255 / cumulativeMaps[i][255]) * cumulativeMaps[i][pixel[i]])
+                tmpImage.append(tuple(newPixel))
             newImage.append(tmpImage)
         
         self.outputImage = newImage
@@ -537,33 +594,33 @@ class Main(QMainWindow, MainUi):
         self.showOutputImage()
         
     def getPixelMask(self, image, index, index2, filterSize):
-        maskStartUpRange = index - int(filterSize/2)
-        maskEndBottomRange = index + int(filterSize/2)
-        maskStartLeftRange = index2 - int(filterSize/2)
-        maskEndRightRange = index2 + int(filterSize/2)
-        numberOfRows = len(image)
-        numberOfColumns = len(image[0])
-        mask = []
-        
-        if filterSize == 2:
-            pixel1 = image[index][index2]
-            pixel2 = image[index][index2+1] if index2+1 < numberOfColumns else 0
-            pixel3 = image[index+1][index2] if index+1 < numberOfRows else 0
-            pixel4 = image[index+1][index2+1] if index2+1 < numberOfColumns and index+1 < numberOfRows else 0
+            maskStartUpRange = index - int(filterSize/2)
+            maskEndBottomRange = index + int(filterSize/2)
+            maskStartLeftRange = index2 - int(filterSize/2)
+            maskEndRightRange = index2 + int(filterSize/2)
+            numberOfRows = len(image)
+            numberOfColumns = len(image[0])
+            mask = []
             
-            mask.append([[pixel1, pixel2],[pixel3, pixel4]])
-        else:
-            for i in  range(maskStartUpRange, maskEndBottomRange + 1):
-                tmpRow = []
-                for j in range(maskStartLeftRange, maskEndRightRange + 1):
-                    if i < 0 or j < 0 or i >= numberOfRows or j >= numberOfColumns:
-                        tmpRow.append(0)
-                    else:
-                        tmpRow.append(image[i][j])
-                mask.append(tmpRow)
-        
-        mask = np.array(mask).reshape(filterSize, filterSize)
-        return mask
+            if filterSize == 2:
+                pixel1 = image[index][index2]
+                pixel2 = image[index][index2+1] if index2+1 < numberOfColumns else 0
+                pixel3 = image[index+1][index2] if index+1 < numberOfRows else 0
+                pixel4 = image[index+1][index2+1] if index2+1 < numberOfColumns and index+1 < numberOfRows else 0
+                
+                mask.append([[pixel1, pixel2],[pixel3, pixel4]])
+            else:
+                for i in  range(maskStartUpRange, maskEndBottomRange + 1):
+                    tmpRow = []
+                    for j in range(maskStartLeftRange, maskEndRightRange + 1):
+                        if i < 0 or j < 0 or i >= numberOfRows or j >= numberOfColumns:
+                            tmpRow.append(0)
+                        else:
+                            tmpRow.append(image[i][j])
+                    mask.append(tmpRow)
+            
+            mask = np.array(mask).reshape(filterSize, filterSize)
+            return mask
 
     def getMasks(self, filterSize=3):
         masks = []
@@ -707,6 +764,7 @@ class Main(QMainWindow, MainUi):
             self.outputImage = np.real(np.fft.ifft2(FT_img * H))
             self.plotOutputImage()
             self.showOutputImage()
+
     def apply_Ideal_HighPass_Filter(self):
         D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
         if okPressed:
@@ -732,6 +790,7 @@ class Main(QMainWindow, MainUi):
             self.outputImage = np.real(np.fft.ifft2(FT_img * H))
             self.plotOutputImage()
             self.showOutputImage()
+
     def apply_Butterworth_LowPass_Filter(self):
         D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
         if okPressed:
@@ -759,6 +818,7 @@ class Main(QMainWindow, MainUi):
                 self.outputImage = np.real(np.fft.ifft2(FT_img * H))
                 self.plotOutputImage()
                 self.showOutputImage()   
+
     def apply_Butterworth_HighPass_Filter(self):
         D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
         if okPressed:
@@ -786,6 +846,7 @@ class Main(QMainWindow, MainUi):
                 self.outputImage = np.real(np.fft.ifft2(FT_img * H))
                 self.plotOutputImage()
                 self.showOutputImage()  
+
     def apply_Gaussian_LowPass_Filter(self):
         D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
         if okPressed:
@@ -813,6 +874,7 @@ class Main(QMainWindow, MainUi):
             self.outputImage = np.real(np.fft.ifft2(FT_img * H))
             self.plotOutputImage()
             self.showOutputImage()
+
     def apply_Gaussian_HighPass_Filter(self):
         D0, okPressed = QInputDialog.getInt(self, "Choosing D0", "<html style='font-size:10pt; color:red;'>Enter Cutoff Value (D0) :</html>", QLineEdit.Normal)
         if okPressed:
