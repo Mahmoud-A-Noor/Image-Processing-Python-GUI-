@@ -1,4 +1,4 @@
-# Image Processing Using Python
+# PyImageLab
 
 ## Requirements
 
