@@ -20,7 +20,7 @@ A comprehensive image processing application that provides various image manipul
 
 ## Technologies Used
 
-### Frontend
+### GUI
 - **PyQt5**: Main GUI framework for building the desktop application
 - **Qt Designer**: Used for designing the user interface (GUI.ui file)
 - **Matplotlib**: For plotting image histograms and visualizations
