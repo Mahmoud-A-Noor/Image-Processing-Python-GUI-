@@ -1,6 +1,6 @@
 # PyImageLab
 
-A comprehensive image processing application that provides various image manipulation techniques and filters. This desktop application enables users to apply different image processing operations, view histograms, and save processed images with multiple theme options.
+A comprehensive image processing application with multiple theme options that provides various image manipulation techniques and filters. This desktop application enables users to apply different image processing operations, view histograms, and save processed images.
 
 ---
 
